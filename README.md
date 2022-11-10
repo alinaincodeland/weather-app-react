@@ -1,3 +1,11 @@
+# Weather App
+
+This project is done by:
+
+- https://github.com/ju8ko
+- https://github.com/S-Rabi
+- https://github.com/alinaincodeland
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
