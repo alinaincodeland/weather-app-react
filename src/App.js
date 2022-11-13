@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import debounce from "lodash.debounce";
+import dayjs from "dayjs";
 
 const GEO_API_OPTIONS = {
   method: "GET",
@@ -54,6 +55,7 @@ function App() {
   React.useEffect(() => {
     if (selectedCity) {
       setCityName(selectedCity.name);
+      setMatchedCities([]);
       getWeatherData();
     }
   }, [selectedCity]);
@@ -93,6 +95,13 @@ function App() {
       {selectedCity && weatherData && (
         <main>
           <h1>{selectedCity.name}</h1>
+          <span>
+            Sunrise: {dayjs.unix(weatherData.city.sunrise).format("HH:mm")}
+          </span>
+          <br />
+          <span>
+            Sunset: {dayjs.unix(weatherData.city.sunset).format("HH:mm")}
+          </span>
           <div>
             <h3>Today weather:</h3>
             <ul>
@@ -105,20 +114,25 @@ function App() {
           </div>
           <div>
             <h3>5 days forecast:</h3>
-            {Object.entries(weatherDataGroupedByDate)
-              .slice(0)
-              .map((d) => (
-                <div key={d[0]}>
-                  <h4>{d[0]}</h4>
-                  <ul>
-                    {d[1].map((dt) => (
-                      <li key={dt.dt_txt}>
-                        {dt.dt_txt} : {dt.main.temp}℃
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+            <div style={{ display: "flex" }}>
+              {Object.entries(weatherDataGroupedByDate)
+                .slice(1)
+                .map((d) => (
+                  <div key={d[0]}>
+                    <h4>
+                      {dayjs(d[0]).format("dddd")} - {d[0]}
+                    </h4>
+                    <ul>
+                      {d[1].map((dt) => (
+                        <li key={dt.dt_txt}>
+                          {dayjs(dt.dt_txt).format("HH:mm")} : {dt.main.temp}℃ -
+                          feels like {dt.main.feels_like}℃
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+            </div>
           </div>
         </main>
       )}
