@@ -17,10 +17,11 @@ const fetchCities = (cityName) =>
   );
 
 function App() {
+  const [selectedCity, setSelectedCity] = React.useState();
   const [cityName, setCityName] = React.useState("");
   const [matchedCities, setMatchedCities] = React.useState([]);
   const getCities = async () => {
-    if (!cityName) return;
+    if (!cityName || selectedCity) return;
     const response = await fetchCities(cityName);
     const { data } = await response.json();
     setMatchedCities(data?.filter((d) => d.type === "CITY"));
@@ -34,6 +35,17 @@ function App() {
     return () => getCitiesDebounced.cancel();
   }, [cityName]);
 
+  React.useEffect(() => {
+    if (selectedCity) {
+      setCityName(selectedCity.name);
+    }
+  }, [selectedCity]);
+
+  const handleCityName = (e) => {
+    setSelectedCity(undefined);
+    setCityName(e.target.value);
+  };
+
   return (
     <div className="App">
       <div className="search">
@@ -41,15 +53,18 @@ function App() {
           type="text"
           placeholder="Enter city name"
           value={cityName}
-          onChange={(e) => setCityName(e.target.value)}
+          onChange={(e) => handleCityName(e)}
           onKeyPress={() => {}}
         />
         <ul>
           {matchedCities?.map((city) => (
-            <li key={city.id}>{city.name}</li>
+            <li key={city.id} onClick={() => setSelectedCity(city)}>
+              {city.name}
+            </li>
           ))}
         </ul>
       </div>
+      <h1>{selectedCity?.name}</h1>
     </div>
   );
 }
