@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import debounce from "lodash.debounce";
 
-const options = {
+const GEO_API_OPTIONS = {
   method: "GET",
   url: "https://wft-geo-db.p.rapidapi.com/v1/geo/cities",
   headers: {
@@ -12,24 +13,25 @@ const options = {
 const fetchCities = (cityName) =>
   fetch(
     `https://wft-geo-db.p.rapidapi.com/v1/geo/cities?limit=10&namePrefix=${cityName}`,
-    options
+    GEO_API_OPTIONS
   );
 
 function App() {
   const [cityName, setCityName] = React.useState("");
   const [matchedCities, setMatchedCities] = React.useState([]);
+  const getCities = async () => {
+    if (!cityName) return;
+    const response = await fetchCities(cityName);
+    const { data } = await response.json();
+    setMatchedCities(data?.filter((d) => d.type === "CITY"));
+  };
+
+  const getCitiesDebounced = debounce(getCities, 1000);
 
   React.useEffect(() => {
-    if (cityName) {
-      console.log(cityName);
-      const getCities = async () => {
-        const response = await fetchCities(cityName);
-        const { data } = await response.json();
-        setMatchedCities(data?.filter((d) => d.type === "CITY"));
-      };
+    getCitiesDebounced();
 
-      getCities();
-    }
+    return () => getCitiesDebounced.cancel();
   }, [cityName]);
 
   return (
@@ -43,7 +45,7 @@ function App() {
           onKeyPress={() => {}}
         />
         <ul>
-          {matchedCities.map((city) => (
+          {matchedCities?.map((city) => (
             <li key={city.id}>{city.name}</li>
           ))}
         </ul>
