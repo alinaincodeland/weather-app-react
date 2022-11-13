@@ -11,57 +11,69 @@ const GEO_API_OPTIONS = {
   },
 };
 
-const fetchCities = (cityName) =>
-  fetch(
-    `https://wft-geo-db.p.rapidapi.com/v1/geo/cities?limit=10&namePrefix=${cityName}`,
-    GEO_API_OPTIONS
-  );
+const useFetch = (dataMapperFn = (x) => x, fetchOptions) => {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState();
+  const [data, setData] = React.useState();
 
-const fetchWeatherData = ({ latitude, longitude }) =>
-  fetch(
-    `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&appid=fe6de60708ab64e081bda8e97ece617d`
-  );
+  const fetchFunction = async (url) => {
+    setData(undefined);
+    setIsLoading(true);
+    try {
+      const response = await fetch(url, fetchOptions);
+      const json = await response.json();
+      setData(dataMapperFn(json));
+    } catch (e) {
+      setError(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const invalidateData = () => setData(undefined);
+
+  return [fetchFunction, { data, isLoading, error }, invalidateData];
+};
 
 function App() {
   const [selectedCity, setSelectedCity] = React.useState();
   const [cityName, setCityName] = React.useState("");
-  const [matchedCities, setMatchedCities] = React.useState([]);
-  const [weatherData, setWeatherData] = React.useState();
+  const [
+    fetchCitiesData,
+    { isLoading: isCitiesDataLoading, data: citiesData },
+    resetCitiesData,
+  ] = useFetch(
+    (json) => json.data.filter((d) => d.type === "CITY"),
+    GEO_API_OPTIONS
+  );
+  const [
+    fetchWeatherData,
+    { isLoading: isWeatherDataLoading, data: weatherData },
+  ] = useFetch();
 
-  const getCities = async () => {
-    if (!cityName || selectedCity) return;
-    const response = await fetchCities(cityName);
-    const { data } = await response.json();
-    setMatchedCities(data?.filter((d) => d.type === "CITY"));
-  };
-
-  const getWeatherData = async () => {
-    const response = await fetchWeatherData(selectedCity);
-    const data = await response.json();
-    setWeatherData(data);
-  };
-
-  const getCitiesDebounced = debounce(getCities, 1000);
+  const fetchCitiesDataDebounced = debounce(fetchCitiesData, 500);
 
   React.useEffect(() => {
-    getCitiesDebounced();
-    if (!cityName) {
-      setMatchedCities([]);
+    if (cityName && !selectedCity) {
+      fetchCitiesDataDebounced(
+        `https://wft-geo-db.p.rapidapi.com/v1/geo/cities?limit=10&namePrefix=${cityName}`
+      );
     }
-
-    return () => getCitiesDebounced.cancel();
+    return () => fetchCitiesDataDebounced.cancel();
   }, [cityName]);
 
   React.useEffect(() => {
     if (selectedCity) {
       setCityName(selectedCity.name);
-      setMatchedCities([]);
-      getWeatherData();
+      fetchWeatherData(
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${selectedCity.latitude}&lon=${selectedCity.longitude}&units=metric&appid=fe6de60708ab64e081bda8e97ece617d`
+      );
     }
   }, [selectedCity]);
 
   const handleCityName = (e) => {
     setSelectedCity(undefined);
+    resetCitiesData();
     setCityName(e.target.value);
   };
 
@@ -84,15 +96,19 @@ function App() {
           value={cityName}
           onChange={(e) => handleCityName(e)}
         />
-        <ul>
-          {matchedCities?.map((city) => (
-            <li key={city.id} onClick={() => setSelectedCity(city)}>
-              {city.name}
-            </li>
-          ))}
-        </ul>
+        {isCitiesDataLoading && <span>Cities data loading...</span>}
+        {!isCitiesDataLoading && !selectedCity && cityName && (
+          <ul>
+            {citiesData?.map((city) => (
+              <li key={city.id} onClick={() => setSelectedCity(city)}>
+                {city.name}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-      {selectedCity && weatherData && (
+      {isWeatherDataLoading && <span>Weather data loading...</span>}
+      {!isWeatherDataLoading && selectedCity && weatherData && (
         <main>
           <h1>{selectedCity.name}</h1>
           <span>
@@ -103,7 +119,13 @@ function App() {
             Sunset: {dayjs.unix(weatherData.city.sunset).format("HH:mm")}
           </span>
           <div>
-            <h3>Today weather:</h3>
+            <h3>Today weather: </h3>
+            <h2>
+              {
+                Object.entries(weatherDataGroupedByDate)[0][1][0].weather[0]
+                  .main
+              }
+            </h2>
             <ul>
               {Object.entries(weatherDataGroupedByDate)[0][1].map((d) => (
                 <li key={d.dt_txt}>
