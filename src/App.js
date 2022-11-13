@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import debounce from "lodash.debounce";
 import dayjs from "dayjs";
+import "./App.css";
+import { BasicWeatherInfo } from "./components/BasicWeatherInfo";
+import { ExtraWeatherInfo } from "./components/ExtraWeatherInfo";
+import { WeatherCurrentStatus } from "./components/WeatherCurrentStatus";
 
 const GEO_API_OPTIONS = {
   method: "GET",
@@ -56,7 +60,7 @@ function App() {
   React.useEffect(() => {
     if (cityName && !selectedCity) {
       fetchCitiesDataDebounced(
-        `https://wft-geo-db.p.rapidapi.com/v1/geo/cities?limit=10&namePrefix=${cityName}`
+        `https://wft-geo-db.p.rapidapi.com/v1/geo/cities?limit=5&minPopulation=1000000&namePrefix=${cityName}`
       );
     }
     return () => fetchCitiesDataDebounced.cancel();
@@ -88,17 +92,20 @@ function App() {
     }, {}) ?? {};
 
   return (
-    <div className="App">
+    <div className="app-container">
+      <h1 className="app-header">World Weather</h1>
       <div className="search">
         <input
+          className="search-input"
           type="text"
           placeholder="Enter city name"
           value={cityName}
           onChange={(e) => handleCityName(e)}
         />
+
         {isCitiesDataLoading && <span>Cities data loading...</span>}
         {!isCitiesDataLoading && !selectedCity && cityName && (
-          <ul>
+          <ul className="cities-list">
             {citiesData?.map((city) => (
               <li key={city.id} onClick={() => setSelectedCity(city)}>
                 {city.name}
@@ -110,30 +117,21 @@ function App() {
       {isWeatherDataLoading && <span>Weather data loading...</span>}
       {!isWeatherDataLoading && selectedCity && weatherData && (
         <main>
-          <h1>{selectedCity.name}</h1>
-          <span>
-            Sunrise: {dayjs.unix(weatherData.city.sunrise).format("HH:mm")}
-          </span>
-          <br />
-          <span>
-            Sunset: {dayjs.unix(weatherData.city.sunset).format("HH:mm")}
-          </span>
-          <div>
-            <h3>Today weather: </h3>
-            <h2>
-              {
-                Object.entries(weatherDataGroupedByDate)[0][1][0].weather[0]
-                  .main
-              }
-            </h2>
-            <ul>
-              {Object.entries(weatherDataGroupedByDate)[0][1].map((d) => (
-                <li key={d.dt_txt}>
-                  {d.dt_txt} : {d.main.temp}℃
-                </li>
-              ))}
-            </ul>
-          </div>
+          <BasicWeatherInfo
+            cityName={selectedCity.name}
+            currentTemperature={weatherData.list[0].main.temp}
+          />
+          <ExtraWeatherInfo
+            feelsLikeTemperature={weatherData.list[0].main.feels_like}
+            sunrise={weatherData.city.sunrise}
+            sunset={weatherData.city.sunset}
+            windSpeed={weatherData.list[0].wind.speed}
+          />
+          <WeatherCurrentStatus
+            weatherType={weatherData.list[0].weather[0].main}
+            weatherIcon={weatherData.list[0].weather[0].icon}
+          />
+
           <div>
             <h3>5 days forecast:</h3>
             <div style={{ display: "flex" }}>
