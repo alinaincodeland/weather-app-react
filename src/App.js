@@ -16,10 +16,17 @@ const fetchCities = (cityName) =>
     GEO_API_OPTIONS
   );
 
+const fetchWeatherData = ({ latitude, longitude }) =>
+  fetch(
+    `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&appid=fe6de60708ab64e081bda8e97ece617d`
+  );
+
 function App() {
   const [selectedCity, setSelectedCity] = React.useState();
   const [cityName, setCityName] = React.useState("");
   const [matchedCities, setMatchedCities] = React.useState([]);
+  const [weatherData, setWeatherData] = React.useState();
+
   const getCities = async () => {
     if (!cityName || selectedCity) return;
     const response = await fetchCities(cityName);
@@ -27,10 +34,19 @@ function App() {
     setMatchedCities(data?.filter((d) => d.type === "CITY"));
   };
 
+  const getWeatherData = async () => {
+    const response = await fetchWeatherData(selectedCity);
+    const data = await response.json();
+    setWeatherData(data);
+  };
+
   const getCitiesDebounced = debounce(getCities, 1000);
 
   React.useEffect(() => {
     getCitiesDebounced();
+    if (!cityName) {
+      setMatchedCities([]);
+    }
 
     return () => getCitiesDebounced.cancel();
   }, [cityName]);
@@ -38,6 +54,7 @@ function App() {
   React.useEffect(() => {
     if (selectedCity) {
       setCityName(selectedCity.name);
+      getWeatherData();
     }
   }, [selectedCity]);
 
@@ -45,6 +62,16 @@ function App() {
     setSelectedCity(undefined);
     setCityName(e.target.value);
   };
+
+  const weatherDataGroupedByDate =
+    weatherData?.list.reduce((grouped, current) => {
+      const [key] = current.dt_txt.split(" ");
+      if (!grouped[key]) {
+        grouped[key] = [];
+      }
+      grouped[key].push(current);
+      return grouped;
+    }, {}) ?? {};
 
   return (
     <div className="App">
@@ -54,7 +81,6 @@ function App() {
           placeholder="Enter city name"
           value={cityName}
           onChange={(e) => handleCityName(e)}
-          onKeyPress={() => {}}
         />
         <ul>
           {matchedCities?.map((city) => (
@@ -64,7 +90,38 @@ function App() {
           ))}
         </ul>
       </div>
-      <h1>{selectedCity?.name}</h1>
+      {selectedCity && weatherData && (
+        <main>
+          <h1>{selectedCity.name}</h1>
+          <div>
+            <h3>Today weather:</h3>
+            <ul>
+              {Object.entries(weatherDataGroupedByDate)[0][1].map((d) => (
+                <li key={d.dt_txt}>
+                  {d.dt_txt} : {d.main.temp}℃
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3>5 days forecast:</h3>
+            {Object.entries(weatherDataGroupedByDate)
+              .slice(0)
+              .map((d) => (
+                <div key={d[0]}>
+                  <h4>{d[0]}</h4>
+                  <ul>
+                    {d[1].map((dt) => (
+                      <li key={dt.dt_txt}>
+                        {dt.dt_txt} : {dt.main.temp}℃
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+          </div>
+        </main>
+      )}
     </div>
   );
 }
