@@ -110,3 +110,8 @@ body {
 .forecasts-day li {
   list-style: none;
 }
+.arrow-down-icon,
+.arrow-up-icon {
+  font-size: 1.2rem;
+  font-weight: 400;
+}
