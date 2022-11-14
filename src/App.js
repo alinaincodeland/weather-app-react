@@ -69,7 +69,7 @@ function App() {
 
   React.useEffect(() => {
     if (selectedCity) {
-      setCityName(selectedCity.name);
+      setCityName("");
       fetchWeatherData(
         `https://api.openweathermap.org/data/2.5/forecast?lat=${selectedCity.latitude}&lon=${selectedCity.longitude}&units=metric&appid=fe6de60708ab64e081bda8e97ece617d`
       );
