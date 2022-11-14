@@ -60,7 +60,7 @@ function App() {
   React.useEffect(() => {
     if (cityName && !selectedCity) {
       fetchCitiesDataDebounced(
-        `https://wft-geo-db.p.rapidapi.com/v1/geo/cities?limit=5&minPopulation=1000000&namePrefix=${cityName}`
+        `https://wft-geo-db.p.rapidapi.com/v1/geo/cities?limit=5&minPopulation=500000&namePrefix=${cityName}`
       );
     }
     return () => fetchCitiesDataDebounced.cancel();
@@ -142,7 +142,7 @@ function App() {
                 .map((d) => (
                   <div key={d[0]} className="forecasts-day">
                     <h4>
-                      {dayjs(d[0]).format("dddd")} - {d[0]}
+                      {dayjs(d[0]).format("ddd")}, {dayjs(d[0]).format("D MMM")}
                     </h4>
                     <ul>
                       {d[1].map((dt) => (
