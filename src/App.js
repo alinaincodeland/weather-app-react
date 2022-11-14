@@ -5,6 +5,7 @@ import "./App.css";
 import { BasicWeatherInfo } from "./components/BasicWeatherInfo";
 import { ExtraWeatherInfo } from "./components/ExtraWeatherInfo";
 import { WeatherCurrentStatus } from "./components/WeatherCurrentStatus";
+import { MinMaxDailyTemperature } from "./components/MinMaxDailyTemperature";
 
 const GEO_API_OPTIONS = {
   method: "GET",
@@ -144,14 +145,10 @@ function App() {
                     <h4>
                       {dayjs(d[0]).format("ddd")}, {dayjs(d[0]).format("D MMM")}
                     </h4>
-                    <ul>
-                      {d[1].map((dt) => (
-                        <li key={dt.dt_txt}>
-                          {dayjs(dt.dt_txt).format("HH:mm")} : {dt.main.temp}℃ -
-                          feels like {dt.main.feels_like}℃
-                        </li>
-                      ))}
-                    </ul>
+                    <MinMaxDailyTemperature
+                      mins={d[1].map((dt) => dt.main.temp_min)}
+                      maxs={d[1].map((dt) => dt.main.temp_max)}
+                    />
                   </div>
                 ))}
             </div>
