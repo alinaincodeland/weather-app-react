@@ -116,29 +116,31 @@ function App() {
       </div>
       {isWeatherDataLoading && <span>Weather data loading...</span>}
       {!isWeatherDataLoading && selectedCity && weatherData && (
-        <main>
-          <BasicWeatherInfo
-            cityName={selectedCity.name}
-            currentTemperature={weatherData.list[0].main.temp}
-          />
-          <ExtraWeatherInfo
-            feelsLikeTemperature={weatherData.list[0].main.feels_like}
-            sunrise={weatherData.city.sunrise}
-            sunset={weatherData.city.sunset}
-            windSpeed={weatherData.list[0].wind.speed}
-          />
-          <WeatherCurrentStatus
-            weatherType={weatherData.list[0].weather[0].main}
-            weatherIcon={weatherData.list[0].weather[0].icon}
-          />
+        <main className="main">
+          <section className="todays-weather ">
+            <BasicWeatherInfo
+              cityName={selectedCity.name}
+              currentTemperature={weatherData.list[0].main.temp}
+            />
+            <WeatherCurrentStatus
+              weatherType={weatherData.list[0].weather[0].main}
+              weatherIcon={weatherData.list[0].weather[0].icon}
+            />
+            <ExtraWeatherInfo
+              feelsLikeTemperature={weatherData.list[0].main.feels_like}
+              sunrise={weatherData.city.sunrise}
+              sunset={weatherData.city.sunset}
+              windSpeed={weatherData.list[0].wind.speed}
+            />
+          </section>
 
-          <div>
-            <h3>5 days forecast:</h3>
-            <div style={{ display: "flex" }}>
+          <section className="five-days-forecast">
+            <h3 className="forecast-header">Five days forecast:</h3>
+            <div className="forecast-container">
               {Object.entries(weatherDataGroupedByDate)
                 .slice(1)
                 .map((d) => (
-                  <div key={d[0]}>
+                  <div key={d[0]} className="forecasts-day">
                     <h4>
                       {dayjs(d[0]).format("dddd")} - {d[0]}
                     </h4>
@@ -153,7 +155,7 @@ function App() {
                   </div>
                 ))}
             </div>
-          </div>
+          </section>
         </main>
       )}
     </div>

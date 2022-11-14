@@ -3,8 +3,8 @@ import "../App.css";
 
 export function BasicWeatherInfo(props) {
   return (
-    <div>
-      <h2>{props.cityName}</h2>
+    <div className="basic-weather-info weather-info">
+      <h2 className="city-name-header">{props.cityName}</h2>
       <p>{dayjs().format("MMM D")}</p>
       <p>{props.currentTemperature}℃</p>
     </div>

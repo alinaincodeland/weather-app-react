@@ -21,11 +21,11 @@ body {
   height: 100vh; */
 
   background-image: linear-gradient(
-      to bottom,
-      rgba(245, 246, 252, 0.52),
-      rgba(117, 19, 93, 0.73)
+      185deg,
+      rgba(234, 228, 233, 0.6488970588235294) 0%,
+      rgba(39, 34, 195, 0.5900735294117647) 100%
     ),
-    url(./images/background.jpg);
+    url(./images/6452058.jpg);
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -58,5 +58,58 @@ body {
   padding: 0.5rem;
 }
 .cities-list li {
+  list-style: none;
+}
+/* Today's weather */
+.main {
+  width: 90vw;
+}
+.todays-weather {
+  display: flex;
+  justify-content: space-around;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+.weather-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(31, 31, 54, 0.196);
+  width: 20vw;
+  padding: 2rem;
+  border-radius: 10px;
+}
+.city-name-header {
+  font-size: 1.8rem;
+}
+.current-conditions-image {
+  width: 10rem;
+}
+.extra-weather-info {
+  align-items: flex-start;
+}
+
+/* five days forecast */
+.five-days-forecast {
+  padding: 1rem;
+  font-size: 1.4rem;
+}
+.forecast-header {
+  margin: 0;
+  font-family: "Raleway", sans-serif;
+}
+.forecast-container {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.4rem;
+}
+.forecasts-day {
+  background-color: rgba(255, 255, 255, 0.41);
+  width: 14vw;
+  border-radius: 10px;
+  padding: 1rem;
+}
+.forecasts-day li {
   list-style: none;
 }
