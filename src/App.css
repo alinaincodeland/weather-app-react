@@ -99,6 +99,9 @@ body {
 .extra-weather-info {
   align-items: flex-start;
 }
+.weather-unit {
+  font-size: 1.4rem;
+}
 
 /* five days forecast */
 .five-days-forecast {

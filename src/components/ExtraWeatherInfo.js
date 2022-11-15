@@ -1,7 +1,7 @@
-import dayjs from "dayjs";
+// import dayjs from "dayjs";
 import {
-  WiHorizonAlt,
-  WiHorizon,
+  WiRaindrop,
+  WiBarometer,
   WiThermometerExterior,
   WiStrongWind,
 } from "react-icons/wi";
@@ -14,13 +14,15 @@ export function ExtraWeatherInfo(props) {
         {props.feelsLikeTemperature.toFixed()}℃
       </p>
       <p>
-        <WiHorizonAlt /> Sunrise: {dayjs.unix(props.sunrise).format("HH:mm")}
+        <WiRaindrop /> Humidity: {props.humidity}%
       </p>
       <p>
-        <WiHorizon /> Sunset: {dayjs.unix(props.sunset).format("HH:mm")}
+        <WiBarometer /> Pressure: {props.pressure}
+        <span className="weather-unit">hPa</span>
       </p>
       <p>
-        <WiStrongWind /> Wind speed: {props.windSpeed}m/s
+        <WiStrongWind /> Wind speed: {props.windSpeed}
+        <span className="weather-unit">m/s</span>
       </p>
     </div>
   );
