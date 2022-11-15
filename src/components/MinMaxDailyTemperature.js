@@ -5,7 +5,7 @@ export function MinMaxDailyTemperature(props) {
   const max = Math.max(...props.maxs).toFixed();
 
   return (
-    <ul>
+    <ul className="five-days-forecast">
       <li>
         <FaArrowDown className="arrow-down-icon" /> min {min}℃
       </li>

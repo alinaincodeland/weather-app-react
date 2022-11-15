@@ -69,7 +69,7 @@ function App() {
 
   React.useEffect(() => {
     if (selectedCity) {
-      setCityName(selectedCity.name);
+      setCityName("");
       fetchWeatherData(
         `https://api.openweathermap.org/data/2.5/forecast?lat=${selectedCity.latitude}&lon=${selectedCity.longitude}&units=metric&appid=fe6de60708ab64e081bda8e97ece617d`
       );
@@ -129,8 +129,8 @@ function App() {
             />
             <ExtraWeatherInfo
               feelsLikeTemperature={weatherData.list[0].main.feels_like}
-              sunrise={weatherData.city.sunrise}
-              sunset={weatherData.city.sunset}
+              humidity={weatherData.list[0].main.humidity}
+              pressure={weatherData.list[0].main.pressure}
               windSpeed={weatherData.list[0].wind.speed}
             />
           </section>
