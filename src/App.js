@@ -6,6 +6,7 @@ import { BasicWeatherInfo } from "./components/BasicWeatherInfo";
 import { ExtraWeatherInfo } from "./components/ExtraWeatherInfo";
 import { WeatherCurrentStatus } from "./components/WeatherCurrentStatus";
 import { MinMaxDailyTemperature } from "./components/MinMaxDailyTemperature";
+import { motion } from "framer-motion";
 
 const GEO_API_OPTIONS = {
   method: "GET",
@@ -135,7 +136,11 @@ function App() {
             />
           </section>
 
-          <section className="five-days-forecast">
+          <motion.section
+            animate={{ y: 0, scale: 1 }}
+            initial={{ y: 100, scale: 0 }}
+            className="five-days-forecast"
+          >
             <h3 className="forecast-header">Five days forecast:</h3>
             <div className="forecast-container">
               {Object.entries(weatherDataGroupedByDate)
@@ -152,7 +157,7 @@ function App() {
                   </div>
                 ))}
             </div>
-          </section>
+          </motion.section>
         </main>
       )}
     </div>

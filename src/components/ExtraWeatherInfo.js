@@ -1,4 +1,5 @@
 // import dayjs from "dayjs";
+import { motion } from "framer-motion";
 import {
   WiRaindrop,
   WiBarometer,
@@ -8,7 +9,11 @@ import {
 
 export function ExtraWeatherInfo(props) {
   return (
-    <div className="extra-weather-info weather-info">
+    <motion.div
+      animate={{ y: 0, scale: 1 }}
+      initial={{ y: 100, scale: 0 }}
+      className="extra-weather-info weather-info"
+    >
       <p>
         <WiThermometerExterior /> Feels like:{" "}
         {props.feelsLikeTemperature.toFixed()}℃
@@ -24,6 +29,6 @@ export function ExtraWeatherInfo(props) {
         <WiStrongWind /> Wind speed: {props.windSpeed}
         <span className="weather-unit">m/s</span>
       </p>
-    </div>
+    </motion.div>
   );
 }
