@@ -139,6 +139,7 @@ function App() {
           <motion.section
             animate={{ y: 0, scale: 1 }}
             initial={{ y: 100, scale: 0 }}
+            transition={{ delay: 1.5 }}
             className="five-days-forecast"
           >
             <h3 className="forecast-header">Five days forecast:</h3>

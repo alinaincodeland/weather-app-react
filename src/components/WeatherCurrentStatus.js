@@ -6,6 +6,7 @@ export function WeatherCurrentStatus(props) {
     <motion.div
       animate={{ y: 0, scale: 1 }}
       initial={{ y: 100, scale: 0 }}
+      transition={{ delay: 0.5 }}
       className="current-weather-status weather-info"
     >
       <img
